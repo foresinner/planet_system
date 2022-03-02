@@ -3,14 +3,16 @@ import 'package:provider/provider.dart';
 import 'edit_system_screen.dart';
 import 'system_screen.dart';
 
-const int minRadius = 60;
-const int maxRadius = 170;
+const int minDistance = 80;
+const int maxDistance = 160;
 const int minSpeed = 1;
 const int maxSpeed = 30;
 const double systemCenterX = 110;
 const double systemCenterY = 210;
 const double sunD = 100;
 const double planetD = 20;
+const int minRadius = 5;
+const int maxRadius = 15;
 
 void main() {
   runApp(const PlanetSystem());

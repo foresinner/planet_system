@@ -4,26 +4,29 @@ import 'dart:math';
 import 'package:testing/main.dart';
 
 class Planet extends StatefulWidget {
-  const Planet({Key? key, required this.id, required this.radius, required this.speed,
-    required this.name, required this.color}) : super(key: key);
+  const Planet({Key? key, required this.id, required this.distance, required this.speed,
+    required this.radius, required this.name, required this.color}) : super(key: key);
 
   final String id;
-  final int radius;
+  final int distance;
   final int speed;
+  final int radius;
   final String name;
   final Color color;
 
   Planet copyWith({
     String? id,
-    int? radius,
+    int? distance,
     int? speed,
+    int? radius,
     String? name,
     Color? color,
   }) {
     return Planet(
       id: id ?? this.id,
-      radius: radius ?? this.radius,
+      distance: distance ?? this.distance,
       speed: speed ?? this.speed,
+      radius: radius ?? this.radius,
       name: name ?? this.name,
       color: color ?? this.color,
     );
@@ -36,15 +39,17 @@ class Planet extends StatefulWidget {
 class _PlanetState extends State<Planet> with SingleTickerProviderStateMixin {
   late Animation animation;
   late AnimationController controller;
-  Duration _curSpeed = const Duration(seconds: 1);
-  double _curRadius = 0;
-  final double _offsetX = systemCenterX + sunD - planetD/2;
-  final double _offsetY = systemCenterY + sunD - planetD/2;
+  Duration _curSpeed = const Duration(seconds: minSpeed);
+  double _curDistance = minDistance.toDouble();
+  double _curRadius = minRadius.toDouble();
+  final double _offsetX = systemCenterX + sunD;
+  final double _offsetY = systemCenterY + sunD;
 
   @override
   void initState() {
     super.initState();
     _curSpeed = Duration(seconds: widget.speed);
+    _curDistance = widget.distance.toDouble();
     _curRadius = widget.radius.toDouble();
 
     controller = AnimationController(
@@ -60,7 +65,10 @@ class _PlanetState extends State<Planet> with SingleTickerProviderStateMixin {
       // reverseCurve: Curves.easeInOutQuad,
     );
 
-    Tween myTween = Tween<double>(begin: _offsetX - _curRadius, end: _offsetX + _curRadius);
+    Tween myTween = Tween<double>(
+        begin: _offsetX - widget.radius.toDouble() - _curDistance,
+        end: _offsetX - widget.radius.toDouble() + _curDistance
+    );
     animation = myTween.animate(curvedAnimation);
 
     animation.addListener(() {
@@ -69,10 +77,11 @@ class _PlanetState extends State<Planet> with SingleTickerProviderStateMixin {
           _curSpeed = Duration(seconds: widget.speed);
           controller.duration = _curSpeed;
         }
-        if (_curRadius != widget.radius.toDouble()) {
+        if ((_curDistance != widget.distance.toDouble()) || (_curRadius != widget.radius.toDouble())) {
+          _curDistance = widget.distance.toDouble();
           _curRadius = widget.radius.toDouble();
-          myTween.begin = _offsetX - _curRadius;
-          myTween.end = _offsetX + _curRadius;
+          myTween.begin = _offsetX - _curRadius - _curDistance;
+          myTween.end = _offsetX - _curRadius + _curDistance;
         }
       });
     });
@@ -98,17 +107,21 @@ class _PlanetState extends State<Planet> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Positioned(
       child: Container(
-        width: planetD,
-        height: planetD,
+        width: widget.radius.toDouble()*2,
+        height: widget.radius.toDouble()*2,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(planetD),
+          borderRadius: BorderRadius.circular(widget.radius.toDouble()*2),
           color: widget.color,
         ),
       ),
       left: animation.value,
       top: animation.status == AnimationStatus.forward ?
-      _offsetY + sqrt((widget.radius.toDouble() + _offsetX - animation.value)*(animation.value + widget.radius.toDouble() - _offsetX)) :
-      _offsetY - sqrt((widget.radius.toDouble() + _offsetX - animation.value)*(animation.value + widget.radius.toDouble() - _offsetX)),
+      //_offsetY + sqrt((widget.radius.toDouble() + _offsetX - animation.value)*(animation.value + widget.radius.toDouble() - _offsetX)) :
+      _offsetY - widget.radius.toDouble() + sqrt((widget.distance.toDouble() + _offsetX - widget.radius.toDouble() - animation.value)*
+          (animation.value + widget.distance.toDouble() - _offsetX + widget.radius.toDouble())) :
+      //_offsetY - sqrt((widget.radius.toDouble() + _offsetX - animation.value)*(animation.value + widget.radius.toDouble() - _offsetX)),
+      _offsetY - widget.radius.toDouble() - sqrt((widget.distance.toDouble() + _offsetX - widget.radius.toDouble() - animation.value)*
+          (animation.value + widget.distance.toDouble() - _offsetX + widget.radius.toDouble())),
     );
   }
 }

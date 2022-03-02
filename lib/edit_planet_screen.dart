@@ -25,8 +25,9 @@ class EditPlanetScreen extends StatefulWidget {
 }
 
 class _EditPlanetScreenState extends State<EditPlanetScreen> {
-  int _currentRadius = minRadius;
+  int _currentDistance = minDistance;
   int _currentSpeed = minSpeed;
+  int _currentRadius = minRadius;
   String _currentName = '';
   Color _currentColor = Colors.green;
 
@@ -36,8 +37,9 @@ class _EditPlanetScreenState extends State<EditPlanetScreen> {
 
     final originalItem = widget.originalItem;
     if (originalItem != null) {
-      _currentRadius = originalItem.radius;
+      _currentDistance = originalItem.distance;
       _currentSpeed = originalItem.speed;
+      _currentRadius = originalItem.radius;
       _currentName = originalItem.name;
       _currentColor = originalItem.color;
     }
@@ -53,8 +55,9 @@ class _EditPlanetScreenState extends State<EditPlanetScreen> {
             onPressed: () {
               final planetItem = Planet(
                 id: widget.originalItem?.id ?? const Uuid().v1(),
-                radius: _currentRadius,
+                distance: _currentDistance,
                 speed: _currentSpeed,
+                radius: _currentRadius,
                 name: _currentName,
                 color: _currentColor,
               );
@@ -76,17 +79,20 @@ class _EditPlanetScreenState extends State<EditPlanetScreen> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            buildRadiusField(),
+            buildDistanceField(),
             const SizedBox(height: 10.0),
             buildColorPicker(context),
             const SizedBox(height: 10.0),
             buildSpeedField(),
+            const SizedBox(height: 10.0),
+            buildRadiusField(),
             const SizedBox(height: 16.0),
             PlanetTile(
               item: Planet(
                   id: 'previewMode',
-                  radius: _currentRadius,
+                  distance: _currentDistance,
                   speed: _currentSpeed,
+                  radius: _currentRadius,
                   name: _currentName,
                   color: _currentColor,
               ),
@@ -148,7 +154,7 @@ class _EditPlanetScreenState extends State<EditPlanetScreen> {
     );
   }
 
-  Widget buildRadiusField() {
+  Widget buildDistanceField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -157,25 +163,25 @@ class _EditPlanetScreenState extends State<EditPlanetScreen> {
           textBaseline: TextBaseline.alphabetic,
           children: [
             const Text(
-              'Радиус',
+              'Дистанция',
               style: TextStyle(fontSize: 28.0),
             ),
             const SizedBox(width: 16.0),
             Text(
-              _currentRadius.toInt().toString(),
+              _currentDistance.toInt().toString(),
               style: const TextStyle(fontSize: 18.0),
             ),
           ],
         ),
         Slider(
-          value: _currentRadius.toDouble(),
-          min: minRadius.toDouble(),
-          max: maxRadius.toDouble(),
-          divisions: maxRadius - minRadius,
-          label: _currentRadius.toInt().toString(),
+          value: _currentDistance.toDouble(),
+          min: minDistance.toDouble(),
+          max: maxDistance.toDouble(),
+          divisions: maxDistance - minDistance,
+          label: _currentDistance.toString(),
           onChanged: (double value) {
             setState(() {
-              _currentRadius = value.toInt();
+              _currentDistance = value.toInt();
             });
           },
         ),
@@ -184,7 +190,6 @@ class _EditPlanetScreenState extends State<EditPlanetScreen> {
   }
 
   Widget buildSpeedField() {
-    // 1
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -212,6 +217,41 @@ class _EditPlanetScreenState extends State<EditPlanetScreen> {
           onChanged: (double value) {
             setState(() {
               _currentSpeed = value.toInt();
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget buildRadiusField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            const Text(
+              'Радиус',
+              style: TextStyle(fontSize: 28.0),
+            ),
+            const SizedBox(width: 16.0),
+            Text(
+              _currentRadius.toInt().toString(),
+              style: const TextStyle(fontSize: 18.0),
+            ),
+          ],
+        ),
+        Slider(
+          value: _currentRadius.toDouble(),
+          min: minRadius.toDouble(),
+          max: maxRadius.toDouble(),
+          divisions: maxRadius - minRadius,
+          label: _currentRadius.toString(),
+          onChanged: (double value) {
+            setState(() {
+              _currentRadius = value.toInt();
             });
           },
         ),

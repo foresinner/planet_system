@@ -15,9 +15,11 @@ class PlanetTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(width: 100.0,
+              Container(
+                width: item.radius.toDouble()*2,
+                height: item.radius.toDouble()*2,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: BorderRadius.circular(item.radius.toDouble()*2),
                   color: item.color,
                 ),
               ),
@@ -26,7 +28,7 @@ class PlanetTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Радиус (${item.radius.toString()})',
+                  Text('Дистанция (${item.distance.toString()})',
                     style: const TextStyle(
                       fontSize: 21.0,
                       fontWeight: FontWeight.bold,
